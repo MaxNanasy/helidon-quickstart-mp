@@ -182,6 +182,14 @@
             <artifactId>helidon-microprofile-2.2</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.helidon.microprofile.tracing</groupId>
+            <artifactId>helidon-microprofile-tracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.helidon.tracing</groupId>
+            <artifactId>helidon-tracing-jaeger</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-binding</artifactId>
         </dependency>
