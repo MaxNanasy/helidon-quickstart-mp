@@ -29,6 +29,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -78,6 +79,16 @@ public class GreetResource {
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getDefaultMessage() {
         return createResponse("World");
+    }
+
+    @GET
+    @Path("/remoteGreeting")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getRemoteMessage(@QueryParam("url") String url) {
+        String message = greetingProvider.getRemoteMessage(url);
+        return JSON.createObjectBuilder()
+                .add("message", message)
+                .build();
     }
 
     /**

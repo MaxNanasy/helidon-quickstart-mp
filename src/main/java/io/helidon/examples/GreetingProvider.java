@@ -19,6 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.json.JsonObject;
+import javax.ws.rs.client.ClientBuilder;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -41,6 +43,14 @@ public class GreetingProvider {
 
     String getMessage() {
         return message.get();
+    }
+
+    String getRemoteMessage(String url) {
+        JsonObject remoteMessageJson = ClientBuilder.newClient()
+            .target(url)
+            .request()
+            .get(JsonObject.class);
+        return remoteMessageJson.getString("message");
     }
 
     void setMessage(String message) {
