@@ -15,7 +15,13 @@
  */
 package io.helidon.examples;
 
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
+
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -42,18 +48,37 @@ public class GreetingProvider {
     }
 
     String getMessage() {
-        return message.get();
+        return withSpan("getMessage", () -> {
+            return message.get();
+        });
     }
 
     String getRemoteMessage(String url) {
-        JsonObject remoteMessageJson = ClientBuilder.newClient()
-            .target(url)
-            .request()
-            .get(JsonObject.class);
-        return remoteMessageJson.getString("message");
+        return withSpan("getRemoteMessage", () -> {
+            JsonObject remoteMessageJson = ClientBuilder.newClient()
+                .target(url)
+                .request()
+                .get(JsonObject.class);
+            return remoteMessageJson.getString("message");
+        });
     }
 
     void setMessage(String message) {
-        this.message.set(message);
+        withSpan("setMessage", () -> {
+            this.message.set(message);
+            return null;
+        });
     }
+
+    private <ReturnType> ReturnType withSpan(String operationName, Supplier<ReturnType> callback) {
+        Tracer tracer = GlobalTracer.get();
+
+        Span span = tracer.buildSpan(operationName).start();
+        try (Scope scope = tracer.scopeManager().activate(span, false)) {
+            return callback.get();
+        } finally {
+            span.finish();
+        }
+    }
+
 }
