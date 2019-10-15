@@ -39,6 +39,9 @@ WORKDIR /helidon
 COPY --from=build /helidon/target/helidon-quickstart-mp.jar ./
 COPY --from=build /helidon/target/libs ./libs
 
+ENV SLEEP_LOWER_BOUND=5
+ENV SLEEP_UPPER_BOUND=10
+
 CMD exec java "-DsleepLowerBound=$SLEEP_LOWER_BOUND" "-DsleepUpperBound=$SLEEP_UPPER_BOUND" -jar helidon-quickstart-mp.jar
 
 EXPOSE 8080
