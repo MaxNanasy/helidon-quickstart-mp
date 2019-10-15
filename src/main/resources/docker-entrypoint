@@ -1,0 +1,6 @@
+#!/bin/sh
+
+exec java \
+  "-DsleepLowerBound=$SLEEP_LOWER_BOUND" \
+  "-DsleepUpperBound=$SLEEP_UPPER_BOUND" \
+  -jar helidon-quickstart-mp.jar

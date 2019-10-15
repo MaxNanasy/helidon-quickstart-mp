@@ -38,7 +38,10 @@ WORKDIR /helidon
 # Copy the binary built in the 1st stage
 COPY --from=build /helidon/target/helidon-quickstart-mp.jar ./
 COPY --from=build /helidon/target/libs ./libs
+COPY --from=build /helidon/target/classes/docker-entrypoint /bin
 
-CMD ["java", "-jar", "helidon-quickstart-mp.jar"]
+RUN chmod +x /bin/docker-entrypoint
+
+ENTRYPOINT ["/bin/docker-entrypoint"]
 
 EXPOSE 8080

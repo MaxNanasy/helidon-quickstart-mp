@@ -36,8 +36,10 @@ public final class Main {
      * @param args command line arguments
      * @throws IOException if there are problems reading logging properties
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws Exception {
         setupLogging();
+
+        sleep();
 
         Server server = startServer();
 
@@ -63,4 +65,25 @@ public final class Main {
         LogManager.getLogManager().readConfiguration(
                 Main.class.getResourceAsStream("/logging.properties"));
     }
+
+    private static void sleep() throws Exception {
+        String
+            sleepLowerBoundProperty = System.getProperty("sleepLowerBound"),
+            sleepUpperBoundProperty = System.getProperty("sleepUpperBound");
+        if (sleepLowerBoundProperty != null && !sleepLowerBoundProperty.isEmpty()) {
+            int sleepLowerBound = Integer.valueOf(sleepLowerBoundProperty);
+            int sleepSeconds;
+            if (sleepUpperBoundProperty != null && !sleepUpperBoundProperty.isEmpty()) {
+                int sleepUpperBound = Integer.valueOf(sleepUpperBoundProperty);
+                sleepSeconds = sleepLowerBound + new java.util.Random().nextInt(sleepUpperBound - sleepLowerBound + 1);
+                System.out.println(String.format("%s Waiting %s seconds [%s, %s]", new java.util.Date(), sleepSeconds, sleepLowerBound, sleepUpperBound));
+            } else {
+                sleepSeconds = sleepLowerBound;
+                System.out.println(String.format("%s Waiting %s seconds", new java.util.Date(), sleepSeconds));
+            }
+            Thread.sleep(sleepSeconds * 1000);
+            System.out.println(String.format("%s Finished waiting %s seconds", new java.util.Date(), sleepSeconds));
+        }
+    }
+
 }
